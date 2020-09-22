@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">SignUp</string>
+    <string name="signup">회원가입</string>
+    <string name="email">이메일</string>
+    <string name="edit_email">이메일을 입력해주세요.</string>
+    <string name="password">비밀번호</string>
+    <string name="password_hint">대문자, 소문자, 숫자 1개 이상, 8글자 이상 입력.</string>
+    <string name="password_confirm">비밀번호 확인</string>
+    <string name="nickname">닉네임</string>
+    <string name="nickname_hint">닉네임을 입력해주세요. (8~30자)</string>
+    <string name="password_confirm_hint">비밀번호를 다시 입력해주세요.</string>
+    <string name="birth">생년월일</string>
+    <string name="year_hint">년(4자)</string>
+    <string name="required_terms">개인정보 수집 및 이용 동의(필수)</string>
+    <string name="dummy">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="optional_terms">광고 수신 동의(선택)</string>
+    <string name="submit">제출</string>
 </resources>
