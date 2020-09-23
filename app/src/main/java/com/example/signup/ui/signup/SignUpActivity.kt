@@ -1,6 +1,7 @@
 package com.example.signup.ui.signup
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -27,35 +28,57 @@ class SignUpActivity: AppCompatActivity() {
         disposables.add(email_edit.textChangeEvents()
             .map{ it.text }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{ text ->
-                validate(text.toString(), Type.EMAIL)
+            .subscribe{ email ->
+                validate(email.toString(), Type.EMAIL)
             })
 
         disposables.add(password_edit.textChangeEvents()
             .map{ it.text }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{ text ->
-                validate(text.toString(), Type.PASSWORD)
+            .subscribe{ password ->
+                validate(password.toString(), Type.PASSWORD)
             })
 
         disposables.add(password_confirm_edit.textChangeEvents()
             .map{ it.text }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{ text ->
-                validate(text.toString(), Type.CONFIRM)
+            .subscribe{ password ->
+                validate(password.toString(), Type.CONFIRM)
             })
 
         disposables.add(nickname_edit.textChangeEvents()
             .map{ it.text }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{ text ->
-                validate(text.toString(), Type.NICKNAME)
+            .subscribe{ nickname ->
+                validate(nickname.toString(), Type.NICKNAME)
             })
 
         disposables.add(birth_year_edit.textChangeEvents()
             .map{ it.text }
-            .subscribe{ text ->
-                validate(text.toString(), Type.YEAR)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{ year ->
+                validate(year.toString(), Type.YEAR)
+            })
+
+        disposables.add(birth_month_edit.textChangeEvents()
+            .map{ it.text }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { month ->
+                validate(month.toString(), Type.MONTH)
+            })
+
+        disposables.add(birth_day_edit.textChangeEvents()
+            .map{ it.text }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { day ->
+                validate(day.toString(), Type.DAY)
+            })
+
+        disposables.add(required_terms_checkBox.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                if(required_terms_checkBox.isChecked) viewModel.validateInput(Type.REQUIRED, true)
+                else viewModel.validateInput(Type.REQUIRED, false)
             })
 
         disposables.add(viewModel.submit
@@ -100,10 +123,17 @@ class SignUpActivity: AppCompatActivity() {
                 if(text.length == 4) viewModel.validateInput(type, true)
                 else viewModel.validateInput(type, false)
             }
+
+            Type.MONTH -> {
+                if(text.length in 1..2 && text.toInt() <= 12) viewModel.validateInput(type, true)
+                else viewModel.validateInput(type, false)
+            }
+
+            Type.DAY -> {
+                if(text.length in 1..2 && text.toInt() in 1..31) viewModel.validateInput(type, true)
+                else viewModel.validateInput(type, false)
+            }
         }
     }
 }
 
-enum class Type{
-    EMAIL, PASSWORD, CONFIRM, NICKNAME, YEAR, MONTH, DAY
-}
