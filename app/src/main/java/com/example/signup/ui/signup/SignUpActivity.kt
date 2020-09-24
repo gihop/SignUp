@@ -51,6 +51,7 @@ class SignUpActivity: AppCompatActivity() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe{ password ->
                 validate(password.toString(), Type.PASSWORD)
+                validate(password_confirm_edit.text.toString(), Type.CONFIRM)
             })
 
         disposables.add(password_confirm_edit.textChangeEvents()
@@ -67,7 +68,7 @@ class SignUpActivity: AppCompatActivity() {
                 validate(nickname.toString(), Type.NICKNAME)
             })
 
-        disposables.add(birth_edit.touches()
+        disposables.add(birth_edit.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 datePicker.show()
