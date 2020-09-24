@@ -68,7 +68,7 @@ class SignUpActivity: AppCompatActivity() {
                 validate(nickname.toString(), Type.NICKNAME)
             })
 
-        disposables.add(birth_edit.clicks()
+        disposables.add(birth_edit.touches()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 datePicker.show()
