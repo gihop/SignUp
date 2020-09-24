@@ -1,16 +1,20 @@
 package com.example.signup.ui.signup
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
+import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.signup.R
 import com.jakewharton.rxbinding4.view.clicks
+import com.jakewharton.rxbinding4.view.touches
 import com.jakewharton.rxbinding4.widget.textChangeEvents
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_signup.*
+import java.util.*
 
 class SignUpActivity: AppCompatActivity() {
     internal val disposables = CompositeDisposable()
@@ -23,7 +27,17 @@ class SignUpActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        submit_button.isEnabled = false
+        val mcurrentTime = Calendar.getInstance()
+        val year = mcurrentTime.get(Calendar.YEAR)
+        val month = mcurrentTime.get(Calendar.MONTH)
+        val day = mcurrentTime.get(Calendar.DAY_OF_MONTH)
+
+        val datePicker = DatePickerDialog(this,
+            DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                birth_edit.setText(String.format("%d년 %d월 %d일", year, month + 1, dayOfMonth))
+                viewModel.validateInput(Type.BIRTH, true)
+            }, year, month, day);
+
 
         disposables.add(email_edit.textChangeEvents()
             .map{ it.text }
@@ -53,25 +67,10 @@ class SignUpActivity: AppCompatActivity() {
                 validate(nickname.toString(), Type.NICKNAME)
             })
 
-        disposables.add(birth_year_edit.textChangeEvents()
-            .map{ it.text }
+        disposables.add(birth_edit.touches()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{ year ->
-                validate(year.toString(), Type.YEAR)
-            })
-
-        disposables.add(birth_month_edit.textChangeEvents()
-            .map{ it.text }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { month ->
-                validate(month.toString(), Type.MONTH)
-            })
-
-        disposables.add(birth_day_edit.textChangeEvents()
-            .map{ it.text }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { day ->
-                validate(day.toString(), Type.DAY)
+            .subscribe{
+                datePicker.show()
             })
 
         disposables.add(required_terms_checkBox.clicks()
@@ -116,21 +115,6 @@ class SignUpActivity: AppCompatActivity() {
             Type.NICKNAME -> {
                 val nicknamePattern = Regex("^[\\w\\Wㄱ-ㅎㅏ-ㅣ가-힣]{8,30}\$")
                 if(text.matches(nicknamePattern)) viewModel.validateInput(type, true)
-                else viewModel.validateInput(type, false)
-            }
-
-            Type.YEAR -> {
-                if(text.length == 4) viewModel.validateInput(type, true)
-                else viewModel.validateInput(type, false)
-            }
-
-            Type.MONTH -> {
-                if(text.length in 1..2 && text.toInt() <= 12) viewModel.validateInput(type, true)
-                else viewModel.validateInput(type, false)
-            }
-
-            Type.DAY -> {
-                if(text.length in 1..2 && text.toInt() in 1..31) viewModel.validateInput(type, true)
                 else viewModel.validateInput(type, false)
             }
         }

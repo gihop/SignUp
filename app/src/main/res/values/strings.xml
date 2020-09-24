@@ -19,4 +19,5 @@
     <string name="men">남성</string>
     <string name="women">여성</string>
     <string name="not_selected">선택 안 함</string>
+    <string name="birth_hint">생년월일을 입력해주세요.</string>
 </resources>
