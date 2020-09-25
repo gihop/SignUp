@@ -1,6 +1,7 @@
 package com.example.signup.ui.signup
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.DatePicker
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.signup.R
+import com.example.signup.ui.progressbar.ProgressBarActivity
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.view.touches
 import com.jakewharton.rxbinding4.widget.textChangeEvents
@@ -90,7 +92,8 @@ class SignUpActivity: AppCompatActivity() {
         disposables.add(submit_button.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
-                Toast.makeText(this, "clicked!", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, ProgressBarActivity::class.java)
+                startActivity(intent)
             })
     }
 

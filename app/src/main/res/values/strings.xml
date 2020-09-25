@@ -20,4 +20,6 @@
     <string name="women">여성</string>
     <string name="not_selected">선택 안 함</string>
     <string name="birth_hint">생년월일을 입력해주세요.</string>
+    <string name="progressing">진행중</string>
+    <string name="zero">0%</string>
 </resources>

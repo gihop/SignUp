@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.main.MainActivity">
-
         </activity>
         <activity android:name=".ui.signup.SignUpActivity">
             <intent-filter>
@@ -19,6 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.progressbar.ProgressBarActivity" android:theme="@android:style/Theme.Dialog" />
     </application>
 
 </manifest>
