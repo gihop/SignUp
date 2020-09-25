@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.signup.R
+import com.example.signup.data.UserInfoDatabase
 import com.example.signup.ui.progressbar.ProgressBarActivity
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.view.touches
@@ -21,13 +22,19 @@ import java.util.*
 class SignUpActivity: AppCompatActivity() {
     internal val disposables = CompositeDisposable()
 
-    private val viewModel: SignUpViewModel by lazy {
-        ViewModelProvider(this).get(SignUpViewModel::class.java)
-    }
+    lateinit var viewModel: SignUpViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+
+        val application = requireNotNull(this).application
+
+        val dataSource = UserInfoDatabase.getInstance(application).userInfoDatabaseDao
+
+        val viewModelFactory = SignUpViewModelFactory(dataSource, application)
+
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SignUpViewModel::class.java)
 
         val mcurrentTime = Calendar.getInstance()
         val year = mcurrentTime.get(Calendar.YEAR)
