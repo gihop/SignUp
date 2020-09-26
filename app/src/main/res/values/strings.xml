@@ -22,4 +22,6 @@
     <string name="birth_hint">생년월일을 입력해주세요.</string>
     <string name="progressing">진행중</string>
     <string name="zero">0%</string>
+    <string name="notice">Notice</string>
+    <string name="confirm">확인</string>
 </resources>

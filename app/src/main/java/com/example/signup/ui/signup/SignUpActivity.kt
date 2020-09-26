@@ -1,24 +1,21 @@
 package com.example.signup.ui.signup
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.signup.R
 import com.example.signup.data.UserInfo
 import com.example.signup.data.UserInfoDatabase
-import com.example.signup.ui.progressbar.ProgressBarActivity
+import com.example.signup.ui.popup.FailedPopupActivity
+import com.example.signup.ui.popup.ProgressBarPopupActivity
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.view.touches
 import com.jakewharton.rxbinding4.widget.textChangeEvents
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_signup.*
+import kotlinx.android.synthetic.main.activity_signup.view.*
 import java.util.*
 
 class SignUpActivity: AppCompatActivity() {
@@ -86,6 +83,24 @@ class SignUpActivity: AppCompatActivity() {
                 datePicker.show()
             })
 
+        disposables.add(sex_radio_group.men_button.clicks()
+            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+           .subscribe{
+                viewModel.sex.onNext("남성")
+            })
+
+        disposables.add(sex_radio_group.women_button.clicks()
+            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .subscribe{
+                viewModel.sex.onNext("여성")
+            })
+
+        disposables.add(sex_radio_group.not_selected_button.clicks()
+            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .subscribe{
+                viewModel.sex.onNext("선택 안 함")
+            })
+
         disposables.add(required_terms_checkBox.clicks()
             .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
             .subscribe{
@@ -109,20 +124,11 @@ class SignUpActivity: AppCompatActivity() {
         disposables.add(submit_button.clicks()
 
             .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
-            .doOnSubscribe { Toast.makeText(this, viewModel.duplicated.toString(), Toast.LENGTH_SHORT).show() }
             .subscribe{
-                val intent = Intent(this, ProgressBarActivity::class.java)
+                val intent = Intent(this, ProgressBarPopupActivity::class.java)
                 startActivityForResult(intent, 1)
-                val userInfo = UserInfo(email = email_edit.text.toString())
-//                viewModel.addToUserInfo(userInfo)
-                viewModel.findDuplicatedEmail(email_edit.text.toString())
-            })
 
-        disposables.add(viewModel.duplicated
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
-            .subscribe{ duplicated ->
-                if(duplicated) Toast.makeText(this, "duplicated", Toast.LENGTH_SHORT).show()
-                else Toast.makeText(this, "not duplicated", Toast.LENGTH_SHORT).show()
+                viewModel.findDuplicatedEmail(email_edit.text.toString())
             })
     }
 
@@ -155,12 +161,27 @@ class SignUpActivity: AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(!viewModel.duplicated.value && viewModel.ageLimit.value!!) Toast.makeText(
-            this, "Success", Toast.LENGTH_SHORT).show()
-        else if(viewModel.duplicated.value)
-            Toast.makeText(this, "Duplicated Fail", Toast.LENGTH_SHORT).show()
-        else
-            Toast.makeText(this, "Age limit Fail", Toast.LENGTH_SHORT).show()
+        var httpRequest = viewModel.requestSignUp()
+        when(httpRequest){
+            Http.OK -> {
+                val userInfo = UserInfo(email_edit.text.toString(), password_edit.text.toString()
+                    , nickname_edit.text.toString(), viewModel.birthString.value!!
+                    , viewModel.sex.value!!, true, viewModel.optionalTerms.value!!)
+                viewModel.addToUserInfo(userInfo)
+            }
+
+            Http.BAD_REQUEST -> {
+                val intent = Intent(this, FailedPopupActivity::class.java)
+                intent.putExtra("cause", "이미 가입된 이메일입니다.")
+                startActivity(intent)
+            }
+
+            Http.UNAUTHORIZED -> {
+                val intent = Intent(this, FailedPopupActivity::class.java)
+                intent.putExtra("cause", "만 14세 미만은 회원가입할 수 없습니다.")
+                startActivity(intent)
+            }
+        }
     }
 }
 

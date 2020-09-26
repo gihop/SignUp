@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.progressbar.ProgressBarActivity" android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".ui.popup.ProgressBarPopupActivity" android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".ui.popup.FailedPopupActivity" android:theme="@android:style/Theme.Dialog" />
     </application>
 
 </manifest>

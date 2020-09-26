@@ -1,31 +1,24 @@
-package com.example.signup.ui.progressbar
+package com.example.signup.ui.popup
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.view.Window
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import com.example.signup.R
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
-import kotlinx.android.synthetic.main.activity_progress_bar.*
+import kotlinx.android.synthetic.main.activity_progress_bar_popup.*
 
-class ProgressBarActivity: Activity(){
+class ProgressBarPopupActivity: Activity(){
     private lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.activity_progress_bar)
+        setContentView(R.layout.activity_progress_bar_popup)
 
         progress_bar.progress = 0
 
