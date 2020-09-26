@@ -24,4 +24,10 @@
     <string name="zero">0%</string>
     <string name="notice">Notice</string>
     <string name="confirm">확인</string>
+    <string name="sign_up_complete">회원가입 완료</string>
+    <string name="user_info">회원 정보</string>
+    <string name="required_term">필수 약관</string>
+    <string name="optional_term">선택 약관</string>
+    <string name="restart">다시하기</string>
+    <string name="data_reset">데이터 초기화</string>
 </resources>

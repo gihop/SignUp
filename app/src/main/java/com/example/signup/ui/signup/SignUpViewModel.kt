@@ -19,31 +19,29 @@ import io.reactivex.subjects.BehaviorSubject
 
 class SignUpViewModel(val database: UserInfoDatabaseDao,
         application: Application): AndroidViewModel(application) {
-    private lateinit var disposable: Disposable
-
     val email: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    val password: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    private val password: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    val confirmedPassword: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    private val confirmedPassword: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    val nickname : BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    private val nickname : BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    val birth: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    private val birth: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
     val birthString: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
     val sex: BehaviorSubject<String> = BehaviorSubject.createDefault("남성")
 
-    val requiredTerms: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    private val requiredTerms: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
     val optionalTerms: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
     val submit: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean> = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
 
-    val duplicated: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean> = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
+    private val duplicated: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean> = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
 
-    val ageLimit: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    private val ageLimit: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
     fun validateInput(type: Type, validated: Boolean){
         when(type) {
@@ -77,7 +75,7 @@ class SignUpViewModel(val database: UserInfoDatabaseDao,
     fun findDuplicatedEmail(email: String){
         var found = false
         database.get(email)
-            .subscribe{ userInfo ->
+            .subscribe{
                 found = true
                 duplicated.onNext(true)
             }

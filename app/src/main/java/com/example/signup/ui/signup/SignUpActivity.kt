@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.signup.R
 import com.example.signup.data.UserInfo
 import com.example.signup.data.UserInfoDatabase
+import com.example.signup.ui.main.MainActivity
 import com.example.signup.ui.popup.FailedPopupActivity
 import com.example.signup.ui.popup.ProgressBarPopupActivity
 import com.jakewharton.rxbinding4.view.clicks
@@ -19,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_signup.view.*
 import java.util.*
 
 class SignUpActivity: AppCompatActivity() {
-    internal val disposables = io.reactivex.rxjava3.disposables.CompositeDisposable()
+    private val disposables = io.reactivex.rxjava3.disposables.CompositeDisposable()
 
     lateinit var viewModel: SignUpViewModel
 
@@ -168,6 +169,11 @@ class SignUpActivity: AppCompatActivity() {
                     , nickname_edit.text.toString(), viewModel.birthString.value!!
                     , viewModel.sex.value!!, true, viewModel.optionalTerms.value!!)
                 viewModel.addToUserInfo(userInfo)
+
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("user_email", email_edit.text.toString())
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
             }
 
             Http.BAD_REQUEST -> {
@@ -182,6 +188,11 @@ class SignUpActivity: AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposables.clear()
     }
 }
 
