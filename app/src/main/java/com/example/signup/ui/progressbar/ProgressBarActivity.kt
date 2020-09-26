@@ -1,6 +1,7 @@
 package com.example.signup.ui.progressbar
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -38,6 +39,9 @@ class ProgressBarActivity: Activity(){
                     percent_text.text = "$count%"
                     count++
                 }
+                val intent = Intent()
+                intent.putExtra("Server Communication", "Done")
+                setResult(Activity.RESULT_OK, intent)
                 finish()
             }
     }

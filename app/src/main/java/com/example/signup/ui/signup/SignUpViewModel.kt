@@ -1,17 +1,21 @@
 package com.example.signup.ui.signup
 
 import android.app.Application
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.room.Insert
+import com.example.signup.data.UserInfo
 import com.example.signup.data.UserInfoDatabaseDao
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observable.just
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import kotlinx.android.synthetic.main.activity_progress_bar.*
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers.io
+import io.reactivex.subjects.BehaviorSubject
 
 class SignUpViewModel(val database: UserInfoDatabaseDao,
         application: Application): AndroidViewModel(application) {
@@ -31,7 +35,11 @@ class SignUpViewModel(val database: UserInfoDatabaseDao,
 
     val optionalTerms: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    val submit: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
+    val submit: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean> = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
+
+    val duplicated: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean> = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
+
+    val ageLimit: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
     fun validateInput(type: Type, validated: Boolean){
         when(type) {
@@ -45,21 +53,35 @@ class SignUpViewModel(val database: UserInfoDatabaseDao,
         validateSubmit()
     }
 
-    fun validateSubmit(){
-        if(email.value && password.value && confirmedPassword.value && nickname.value
-            && birth.value && requiredTerms.value) submit.onNext(true)
+    private fun validateSubmit(){
+        if(email.value!! && password?.value!! && confirmedPassword.value!! && nickname.value!!
+            && birth.value!! && requiredTerms.value!!) submit.onNext(true)
         else submit.onNext(false)
     }
 
-//    fun submit(email: String): Disposable{
-//
-//    }
+    fun limitAge(nowYear: Int, nowMonth: Int, nowDay: Int, userYear: Int, userMonth: Int, userDay: Int){
+        if(nowYear - userYear > 14) ageLimit.onNext(true)
+        else if(nowYear - userYear == 14 && nowMonth > userMonth) ageLimit.onNext(true)
+        else if(nowYear - userYear == 14 && nowMonth == userMonth && nowDay >= userDay) ageLimit.onNext(true)
+        else ageLimit.onNext(false)
+    }
 
-//    fun findDuplicatedEmail(email: String){
-//        disposable = Observable.just(database.get(email))
-//
-//        }
-//    }
+    fun findDuplicatedEmail(email: String){
+        var found = false
+        database.get(email)
+            .subscribe{ userInfo ->
+                found = true
+                duplicated.onNext(true)
+            }
+        if(!found) duplicated.onNext(false)
+    }
+
+    fun addToUserInfo(userInfo: UserInfo): io.reactivex.disposables.Disposable = runOnIoScheduler { database.insert(userInfo) }
+
+    fun runOnIoScheduler(func: () -> Unit): Disposable
+            = Completable.fromCallable(func)
+        .subscribeOn(Schedulers.io())
+        .subscribe()
 }
 
 enum class Type{
