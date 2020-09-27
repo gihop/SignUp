@@ -246,12 +246,13 @@
     <TextView
         android:id="@+id/required_terms_dummy_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/dummy"
         android:textSize="11dp"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/required_terms_checkBox" />
@@ -269,12 +270,13 @@
     <TextView
         android:id="@+id/optional_terms_dummy_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/dummy"
         android:textSize="11dp"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/optional_terms_check_box" />

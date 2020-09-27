@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -38,6 +39,8 @@ class SignUpActivity: AppCompatActivity() {
         setContentView(R.layout.activity_signup)
 
         submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
+        required_terms_dummy_text.movementMethod = ScrollingMovementMethod()
+        optional_terms_dummy_text.movementMethod = ScrollingMovementMethod()
 
         val application = requireNotNull(this).application
 
