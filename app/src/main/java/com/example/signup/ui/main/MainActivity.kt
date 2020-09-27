@@ -1,26 +1,18 @@
 package com.example.signup.ui.main
 
-import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.example.signup.R
-import com.example.signup.data.UserInfo
 import com.example.signup.data.UserInfoDatabase
 import com.example.signup.data.UserInfoDatabaseDao
-import com.example.signup.ui.popup.ProgressBarPopupActivity
 import com.example.signup.ui.signup.SignUpActivity
 import com.jakewharton.rxbinding4.view.clicks
 import io.reactivex.Completable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_failed_popup.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_progress_bar_popup.*
 
 class MainActivity : AppCompatActivity() {
     private val disposables = CompositeDisposable()
@@ -62,10 +54,10 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    fun resetDatabase(database: UserInfoDatabaseDao): io.reactivex.disposables.Disposable
+    private fun resetDatabase(database: UserInfoDatabaseDao): io.reactivex.disposables.Disposable
             = runOnIoScheduler { database.clear() }
 
-    fun runOnIoScheduler(func: () -> Unit): io.reactivex.disposables.Disposable
+    private fun runOnIoScheduler(func: () -> Unit): io.reactivex.disposables.Disposable
             = Completable.fromCallable(func)
         .subscribeOn(io.reactivex.schedulers.Schedulers.io())
         .subscribe()

@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.signup.R
@@ -20,7 +20,12 @@ import com.jakewharton.rxbinding4.view.touches
 import com.jakewharton.rxbinding4.widget.editorActionEvents
 import com.jakewharton.rxbinding4.widget.textChangeEvents
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_signup.*
+import kotlinx.android.synthetic.main.activity_signup.birth_text
+import kotlinx.android.synthetic.main.activity_signup.email_text
+import kotlinx.android.synthetic.main.activity_signup.nickname_text
+import kotlinx.android.synthetic.main.activity_signup.password_text
 import kotlinx.android.synthetic.main.activity_signup.view.*
 import java.util.*
 
@@ -51,44 +56,41 @@ class SignUpActivity: AppCompatActivity() {
         val datePicker = DatePickerDialog(this,
             DatePickerDialog.OnDateSetListener { view, userYear, userMonth, userDay ->
                 birth_edit.setText(String.format("%d년 %d월 %d일", userYear, userMonth + 1, userDay))
-                if(viewModel.validateInput(Type.BIRTH, true))
-                    submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
-                else submit_button.setBackgroundColor(Color.RED)
+                changeViewColor(birth_text, Type.BIRTH, true)
                 viewModel.limitAge(year, month, day, userYear, userMonth, userDay)
             }, year, month, day);
-
 
         disposables.add(email_edit.textChangeEvents()
             .map{ it.text }
             .filter{ it.isNotEmpty() }
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{ email ->
-                validate(email.toString(), Type.EMAIL)
+                requestValidation(email.toString(), Type.EMAIL)
             })
 
         disposables.add(password_edit.textChangeEvents()
             .map{ it.text }
             .filter{ it.isNotEmpty() }
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{ password ->
-                validate(password.toString(), Type.PASSWORD)
-                validate(password_confirm_edit.text.toString(), Type.CONFIRM)
+                requestValidation(password.toString(), Type.PASSWORD)
+                requestValidation(password_confirm_edit.text.toString(), Type.CONFIRM)
             })
 
         disposables.add(password_confirm_edit.textChangeEvents()
             .map{ it.text }
             .filter{ it.isNotEmpty() }
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{ password ->
-                validate(password.toString(), Type.CONFIRM)
+                requestValidation(password.toString(), Type.CONFIRM)
             })
 
         disposables.add(nickname_edit.textChangeEvents()
             .map{ it.text }
             .filter{ it.isNotEmpty() }
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{ nickname ->
-                validate(nickname.toString(), Type.NICKNAME)
+                requestValidation(nickname.toString(), Type.NICKNAME)
             })
 
         disposables.add(nickname_edit.editorActionEvents()
@@ -99,59 +101,50 @@ class SignUpActivity: AppCompatActivity() {
             })
 
         disposables.add(birth_edit.touches()
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 datePicker.show()
             })
 
         disposables.add(sex_radio_group.men_button.clicks()
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
            .subscribe{
                 viewModel.sex.onNext("남성")
             })
 
         disposables.add(sex_radio_group.women_button.clicks()
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 viewModel.sex.onNext("여성")
             })
 
         disposables.add(sex_radio_group.not_selected_button.clicks()
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 viewModel.sex.onNext("선택 안 함")
             })
 
         disposables.add(required_terms_checkBox.clicks()
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
-                if(required_terms_checkBox.isChecked){
-                    if(viewModel.validateInput(Type.REQUIRED, true))
-                        submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
-                    else submit_button.setBackgroundColor(Color.RED)
-                }
-                else{
-                    viewModel.validateInput(Type.REQUIRED, false)
-                    submit_button.setBackgroundColor(Color.RED)
-                }
+                changeViewColor(required_terms_text, Type.REQUIRED, required_terms_checkBox.isChecked)
             })
 
         disposables.add(optional_terms_check_box.clicks()
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 if(optional_terms_check_box.isChecked) viewModel.optionalTerms.onNext(true)
                 else viewModel.optionalTerms.onNext(false)
             })
 
         disposables.add(viewModel.submit
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{ submit ->
                 submit_button.isEnabled = submit
             })
 
         disposables.add(submit_button.clicks()
-
-            .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 viewModel.findDuplicatedEmail(email_edit.text.toString())
 
@@ -160,66 +153,40 @@ class SignUpActivity: AppCompatActivity() {
             })
     }
 
-    private fun validate(text: String, type: Type){
+    private fun requestValidation(text: String, type: Type){
         when(type){
             Type.EMAIL -> {
                 val emailPattern = android.util.Patterns.EMAIL_ADDRESS
-                if(emailPattern.matcher(text).matches()){
-                    if(viewModel.validateInput(type, true))
-                        submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
-                    else submit_button.setBackgroundColor(Color.RED)
-                    email_text.setTextColor(resources.getColor(R.color.mainColor))
-                }
-                else{
-                    viewModel.validateInput(type, false)
-                    email_text.setTextColor(Color.RED)
-                    submit_button.setBackgroundColor(Color.RED)
-                }
+                changeViewColor(email_text, type, emailPattern.matcher(text).matches())
             }
 
             Type.PASSWORD -> {
                 val pwdPattern = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}\$")
-                if(text.matches(pwdPattern)) {
-                    if(viewModel.validateInput(type, true))
-                        submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
-                    else submit_button.setBackgroundColor(Color.RED)
-                    password_text.setTextColor(resources.getColor(R.color.mainColor))
-                }
-                else{
-                    viewModel.validateInput(type, false)
-                    password_text.setTextColor(Color.RED)
-                    submit_button.setBackgroundColor(Color.RED)
-                }
+                changeViewColor(password_text, type, text.matches(pwdPattern))
             }
 
             Type.CONFIRM -> {
-                if(text == password_edit.text.toString()){
-                    if(viewModel.validateInput(type, true))
-                        submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
-                    else submit_button.setBackgroundColor(Color.RED)
-                    password_confirm_text.setTextColor(resources.getColor(R.color.mainColor))
-                }
-                else{
-                    viewModel.validateInput(type, false)
-                    password_confirm_text.setTextColor(Color.RED)
-                    submit_button.setBackgroundColor(Color.RED)
-                }
+                changeViewColor(password_confirm_text, type, text == password_edit.text.toString())
             }
 
             Type.NICKNAME -> {
                 val nicknamePattern = Regex("^[\\w\\Wㄱ-ㅎㅏ-ㅣ가-힣]{8,30}\$")
-                if(text.matches(nicknamePattern)) {
-                    if(viewModel.validateInput(type, true))
-                        submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
-                    else submit_button.setBackgroundColor(Color.RED)
-                    nickname_text.setTextColor(resources.getColor(R.color.mainColor))
-                }
-                else{
-                    viewModel.validateInput(type, false)
-                    nickname_text.setTextColor(Color.RED)
-                    submit_button.setBackgroundColor(Color.RED)
-                }
+                changeViewColor(nickname_text, type, text.matches(nicknamePattern))
             }
+        }
+    }
+
+    private fun changeViewColor(textView: TextView, type: Type, match: Boolean){
+        if(match){
+            if(viewModel.validateInput(type, true))
+                submit_button.setBackgroundColor(resources.getColor(R.color.mainColor))
+            else submit_button.setBackgroundColor(Color.RED)
+            textView.setTextColor(resources.getColor(R.color.mainColor))
+        }
+        else{
+            viewModel.validateInput(type, false)
+            textView.setTextColor(Color.RED)
+            submit_button.setBackgroundColor(Color.RED)
         }
     }
 
@@ -227,34 +194,31 @@ class SignUpActivity: AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         var httpRequest = viewModel.requestSignUp()
         when(httpRequest){
-            Http.OK -> {
-                val userInfo = UserInfo(email_edit.text.toString(), password_edit.text.toString()
-                    , nickname_edit.text.toString(), viewModel.birthString.value!!
-                    , viewModel.sex.value!!, true, viewModel.optionalTerms.value!!)
-                viewModel.addToUserInfo(userInfo)
-
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("user_email", email_edit.text.toString())
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                startActivity(intent)
-            }
-
-            Http.BAD_REQUEST -> {
-                val intent = Intent(this, FailedPopupActivity::class.java)
-                intent.putExtra("cause", "이미 가입된 이메일입니다.")
-                startActivity(intent)
-            }
-
-            Http.UNAUTHORIZED -> {
-                val intent = Intent(this, FailedPopupActivity::class.java)
-                intent.putExtra("cause", "만 14세 미만은 회원가입할 수 없습니다.")
-                startActivity(intent)
-            }
+            Http.OK -> launchMainActivity()
+            Http.BAD_REQUEST -> launchFailedPopupActivity("이미 가입된 이메일입니다.")
+            Http.UNAUTHORIZED -> launchFailedPopupActivity("만 14세 미만은 회원가입할 수 없습니다.")
         }
     }
 
+    private fun launchMainActivity(){
+        val userInfo = UserInfo(email_edit.text.toString(), password_edit.text.toString()
+            , nickname_edit.text.toString(), viewModel.birthString.value!!
+            , viewModel.sex.value!!, true, viewModel.optionalTerms.value!!)
+        viewModel.addToUserInfo(userInfo)
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("user_email", email_edit.text.toString())
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
+    }
+
+    private fun launchFailedPopupActivity(message: String){
+        val intent = Intent(this, FailedPopupActivity::class.java)
+        intent.putExtra("cause", message)
+        startActivity(intent)
+    }
+
     private fun hideSoftKeyboard(view: View) {
-        //별도의 변수 없이 획득한 인스턴스의 범위 내에서 작업을 수행한다.
         (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).run{
             hideSoftInputFromWindow(view.windowToken, 0)
         }

@@ -1,24 +1,17 @@
 package com.example.signup.ui.signup
 
 import android.app.Application
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.room.Insert
 import com.example.signup.data.UserInfo
 import com.example.signup.data.UserInfoDatabaseDao
 import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.Schedulers.io
 import io.reactivex.subjects.BehaviorSubject
 
-class SignUpViewModel(val database: UserInfoDatabaseDao,
-        application: Application): AndroidViewModel(application) {
+class SignUpViewModel(
+    private val database: UserInfoDatabaseDao,
+    application: Application): AndroidViewModel(application) {
     val email: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
     private val password: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
@@ -37,9 +30,11 @@ class SignUpViewModel(val database: UserInfoDatabaseDao,
 
     val optionalTerms: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    val submit: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean> = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
+    val submit: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean>
+            = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
 
-    private val duplicated: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean> = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
+    private val duplicated: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean>
+            = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
 
     private val ageLimit: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
@@ -87,12 +82,12 @@ class SignUpViewModel(val database: UserInfoDatabaseDao,
         if(!found) duplicated.onNext(false)
     }
 
-    fun addToUserInfo(userInfo: UserInfo): io.reactivex.disposables.Disposable
+    fun addToUserInfo(userInfo: UserInfo): Disposable
             = runOnIoScheduler { database.insert(userInfo) }
 
-    fun runOnIoScheduler(func: () -> Unit): Disposable
+    private fun runOnIoScheduler(func: () -> Unit): Disposable
             = Completable.fromCallable(func)
-        .subscribeOn(Schedulers.io())
+        .subscribeOn(io())
         .subscribe()
 
     fun requestSignUp(): Http{

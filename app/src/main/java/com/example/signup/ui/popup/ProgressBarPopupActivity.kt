@@ -34,7 +34,7 @@ class ProgressBarPopupActivity: Activity(){
                 }
                 val intent = Intent()
                 intent.putExtra("Server Communication", "Done")
-                setResult(Activity.RESULT_OK, intent)
+                setResult(RESULT_OK, intent)
                 finish()
             }
     }
