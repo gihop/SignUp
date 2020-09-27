@@ -34,7 +34,7 @@ class SignUpViewModel(
             = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
 
     private val duplicated: io.reactivex.rxjava3.subjects.BehaviorSubject<Boolean>
-            = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(false)
+            = io.reactivex.rxjava3.subjects.BehaviorSubject.createDefault(true)
 
     private val ageLimit: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
@@ -91,9 +91,9 @@ class SignUpViewModel(
         .subscribe()
 
     fun requestSignUp(): Http{
-        if(!duplicated.value && ageLimit.value!!) return Http.OK
-        else if(duplicated.value) return Http.BAD_REQUEST
-        else return Http.UNAUTHORIZED
+        return if(!duplicated.value && ageLimit.value!!) Http.OK
+        else if(duplicated.value) Http.BAD_REQUEST
+        else Http.UNAUTHORIZED
     }
 }
 

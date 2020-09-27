@@ -20,7 +20,6 @@ import com.jakewharton.rxbinding4.view.touches
 import com.jakewharton.rxbinding4.widget.editorActionEvents
 import com.jakewharton.rxbinding4.widget.textChangeEvents
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_signup.*
 import kotlinx.android.synthetic.main.activity_signup.birth_text
 import kotlinx.android.synthetic.main.activity_signup.email_text
@@ -127,7 +126,7 @@ class SignUpActivity: AppCompatActivity() {
         disposables.add(required_terms_checkBox.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe{
-                changeViewColor(required_terms_text, Type.REQUIRED, required_terms_checkBox.isChecked)
+                changeViewColor(required_text, Type.REQUIRED, required_terms_checkBox.isChecked)
             })
 
         disposables.add(optional_terms_check_box.clicks()
