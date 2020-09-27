@@ -3,6 +3,8 @@ package com.example.signup.ui.signup
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +16,9 @@ import com.example.signup.ui.popup.FailedPopupActivity
 import com.example.signup.ui.popup.ProgressBarPopupActivity
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.view.touches
+import com.jakewharton.rxbinding4.widget.editorActionEvents
 import com.jakewharton.rxbinding4.widget.textChangeEvents
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_signup.*
 import kotlinx.android.synthetic.main.activity_signup.view.*
 import java.util.*
@@ -84,6 +88,13 @@ class SignUpActivity: AppCompatActivity() {
                 datePicker.show()
             })
 
+        disposables.add(nickname_edit.editorActionEvents()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                hideSoftKeyboard(nickname_edit)
+                datePicker.show()
+            })
+
         disposables.add(sex_radio_group.men_button.clicks()
             .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
            .subscribe{
@@ -126,10 +137,10 @@ class SignUpActivity: AppCompatActivity() {
 
             .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
             .subscribe{
+                viewModel.findDuplicatedEmail(email_edit.text.toString())
+
                 val intent = Intent(this, ProgressBarPopupActivity::class.java)
                 startActivityForResult(intent, 1)
-
-                viewModel.findDuplicatedEmail(email_edit.text.toString())
             })
     }
 
@@ -187,6 +198,13 @@ class SignUpActivity: AppCompatActivity() {
                 intent.putExtra("cause", "만 14세 미만은 회원가입할 수 없습니다.")
                 startActivity(intent)
             }
+        }
+    }
+
+    private fun hideSoftKeyboard(view: View) {
+        //별도의 변수 없이 획득한 인스턴스의 범위 내에서 작업을 수행한다.
+        (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).run{
+            hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 

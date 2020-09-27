@@ -160,6 +160,7 @@
         android:ems="10"
         android:hint="@string/birth_hint"
         android:inputType="date"
+        android:windowSoftInputMode="stateAlwaysHidden"
         android:textAlignment="center"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@+id/birth_text"
