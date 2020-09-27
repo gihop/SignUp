@@ -22,6 +22,7 @@ class ProgressBarPopupActivity: Activity(){
 
         progress_bar.progress = 0
 
+        //2초 동안 progressBar를 증가시키고 팝업 액티비티를 종료합니다.
         disposable = Observable.just(progress_bar)
             .subscribeOn(io())
             .subscribe {
@@ -39,14 +40,17 @@ class ProgressBarPopupActivity: Activity(){
             }
     }
 
+    //터치 이벤트를 막습니다.
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         return event?.action != MotionEvent.ACTION_OUTSIDE
     }
 
+    //백 버튼을 막습니다.
     override fun onBackPressed() {
         return
     }
 
+    //디스포저블을 해제합니다.
     override fun onStop() {
         super.onStop()
         disposable.dispose()

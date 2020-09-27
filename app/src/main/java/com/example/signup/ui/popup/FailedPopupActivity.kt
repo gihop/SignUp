@@ -20,10 +20,17 @@ class FailedPopupActivity: Activity() {
         val intent = intent
         message_text.text = intent.getStringExtra("cause")
 
+        //확인 버튼 클릭 이벤트를 구독합니다.
         disposables.add(confirm_button.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 finish()
             })
+    }
+
+    //디스포저블을 해제합니다.
+    override fun onStop() {
+        super.onStop()
+        disposables.clear()
     }
 }
