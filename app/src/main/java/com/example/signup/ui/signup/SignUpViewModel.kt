@@ -43,7 +43,7 @@ class SignUpViewModel(val database: UserInfoDatabaseDao,
 
     private val ageLimit: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
 
-    fun validateInput(type: Type, validated: Boolean){
+    fun validateInput(type: Type, validated: Boolean): Boolean{
         when(type) {
             Type.EMAIL -> email.onNext(validated)
             Type.PASSWORD -> password.onNext(validated)
@@ -52,13 +52,18 @@ class SignUpViewModel(val database: UserInfoDatabaseDao,
             Type.BIRTH -> birth.onNext(validated)
             Type.REQUIRED -> requiredTerms.onNext(validated)
         }
-        validateSubmit()
+        return validateSubmit()
     }
 
-    private fun validateSubmit(){
-        if(email.value!! && password?.value!! && confirmedPassword.value!! && nickname.value!!
-            && birth.value!! && requiredTerms.value!!) submit.onNext(true)
-        else submit.onNext(false)
+    private fun validateSubmit(): Boolean{
+        return if(email.value!! && password?.value!! && confirmedPassword.value!! && nickname.value!!
+            && birth.value!! && requiredTerms.value!!) {
+            submit.onNext(true)
+            true
+        } else{
+            submit.onNext(false)
+            false
+        }
     }
 
     fun limitAge(nowYear: Int, nowMonth: Int, nowDay: Int, userYear: Int, userMonth: Int, userDay: Int){
