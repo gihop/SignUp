@@ -16,7 +16,9 @@
         android:padding="24dp"
         android:text="@string/sign_up_complete"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,6 +31,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/user_info"
+        android:textColor="@color/mainColor"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,6 +46,7 @@
         android:gravity="center"
         android:text="@string/email"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_info_text" />
@@ -70,6 +74,7 @@
         android:gravity="center"
         android:text="@string/password"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_text" />
@@ -98,6 +103,7 @@
         android:gravity="center"
         android:text="@string/nickname"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_text" />
@@ -125,6 +131,7 @@
         android:gravity="center"
         android:text="@string/birth"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nickname_text" />
@@ -151,6 +158,7 @@
         android:gravity="center"
         android:text="@string/sex"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/birth_text" />
 
@@ -176,6 +184,7 @@
         android:gravity="center"
         android:text="@string/required_term"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sex_text" />
 
@@ -201,6 +210,7 @@
         android:gravity="center"
         android:text="@string/optional_term"
         android:textAlignment="center"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/required_terms_text" />
 
@@ -224,7 +234,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/mainColor"
         android:text="@string/restart"
+        android:textColor="@android:color/background_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/data_reset_button"
         app:layout_constraintHorizontal_bias="0.5"
@@ -239,7 +251,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/mainColor"
         android:text="@string/data_reset"
+        android:textColor="@android:color/background_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
